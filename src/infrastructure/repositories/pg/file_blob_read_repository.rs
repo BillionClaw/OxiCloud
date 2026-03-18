@@ -807,7 +807,7 @@ impl FileReadPort for FileBlobReadRepository {
         }
 
         if let Some(name) = &criteria.name_contains
-            && name.len() >= 3
+            && super::has_min_search_chars(name)
         {
             bind_idx += 1;
             conditions.push(format!("fi.name ILIKE ${bind_idx}"));
@@ -855,7 +855,7 @@ impl FileReadPort for FileBlobReadRepository {
             query = query.bind(fid);
         }
         if let Some(name) = &criteria.name_contains
-            && name.len() >= 3
+            && super::has_min_search_chars(name)
         {
             query = query.bind(super::like_escape(name));
         }
@@ -931,7 +931,7 @@ impl FileReadPort for FileBlobReadRepository {
         );
 
         if let Some(name) = &criteria.name_contains
-            && name.len() >= 3
+            && super::has_min_search_chars(name)
         {
             bind_idx += 1;
             conditions.push(format!("fi.name ILIKE ${bind_idx}"));
@@ -1018,7 +1018,7 @@ impl FileReadPort for FileBlobReadRepository {
         .bind(root_id);
 
         if let Some(name) = &criteria.name_contains
-            && name.len() >= 3
+            && super::has_min_search_chars(name)
         {
             query = query.bind(super::like_escape(name));
         }

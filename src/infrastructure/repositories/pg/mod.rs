@@ -45,6 +45,19 @@ pub use user_pg_repository::UserPgRepository;
 
 // ── SQL helpers ─────────────────────────────────────────────────────────────
 
+/// Minimum character count for search queries.
+const MIN_SEARCH_CHARS: usize = 3;
+
+/// Checks if a string contains at least the minimum required characters
+/// for a search query, counting Unicode characters (not bytes).
+///
+/// This ensures non-ASCII characters (e.g., é, 日本語) are counted correctly
+/// rather than being treated as multiple bytes.
+#[inline]
+pub fn has_min_search_chars(s: &str) -> bool {
+    s.chars().count() >= MIN_SEARCH_CHARS
+}
+
 /// Escape SQL `LIKE` / `ILIKE` wildcard characters (`%` and `_`) in user
 /// input and wrap the result in `%…%` for a contains-match.
 ///

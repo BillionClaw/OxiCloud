@@ -725,7 +725,7 @@ impl FolderRepository for FolderDbRepository {
         // Build optional name filter — use ILIKE (case-insensitive) so the
         // GIN trigram index idx_folders_name_trgm is used instead of a seq scan.
         let (name_clause, name_pattern) = match name_contains {
-            Some(name) if name.len() >= 3 => (
+            Some(name) if super::has_min_search_chars(name) => (
                 if recursive {
                     " AND fo.name ILIKE $2"
                 } else {
@@ -789,7 +789,7 @@ impl FolderRepository for FolderDbRepository {
         } else {
             // Root folders: parent_id IS NULL, reindex params ($1=user_id, $2=pattern)
             let name_clause_root = match name_contains {
-                Some(name) if name.len() >= 3 => " AND fo.name ILIKE $2",
+                Some(name) if super::has_min_search_chars(name) => " AND fo.name ILIKE $2",
                 _ => "",
             };
             format!(
@@ -854,7 +854,7 @@ impl FolderRepository for FolderDbRepository {
         user_id: Uuid,
     ) -> Result<Vec<Folder>, DomainError> {
         let (where_extra, name_pattern) = match name_contains {
-            Some(name) if name.len() >= 3 => {
+            Some(name) if super::has_min_search_chars(name) => {
                 (" AND fo.name ILIKE $3", Some(super::like_escape(name)))
             }
             _ => ("", None),
